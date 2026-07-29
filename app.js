@@ -36,16 +36,16 @@ const COURSES = [
     id: 'c3', glyph: '阅', title: '知新固本',
     note: `<div class="tp-note">读书日课，一书未完不轻易更换</div>
 <div class="tp-section">
-  <div class="tp-label">阅读 Skill · 三条固定法则</div>
+  <div class="tp-label">阅读方法论 Skill · 三条固定</div>
   <div class="tp-item">① 一书不终，不启他书<br><span class="tp-hint">曾国藩读书不二，不碎片化跳读</span></div>
   <div class="tp-item">② 问题导向阅读<br><span class="tp-hint">读前写下1个希望解决的问题，围绕问题抓取答案</span></div>
-  <div class="tp-item">③ 每日输出3条简短笔记<br><span class="tp-hint">摘抄金句或个人感悟，存入素材库</span></div>
+  <div class="tp-item">③ 每日读完输出3条简短笔记<br><span class="tp-hint">摘抄金句或个人感悟，存入素材库</span></div>
 </div>
 <div class="tp-section">
   <div class="tp-label">推荐书单 · 三类循环选读</div>
-  <div class="tp-item">▷ 内心修复 / Gap成长类<br><span class="tp-hint">张宏杰《曾国藩的正面与侧面》</span></div>
-  <div class="tp-item">▷ IP内容营销类<br><span class="tp-hint">《爆款文案》关健明 ·《影响力》西奥迪尼 ·《内容营销》</span></div>
-  <div class="tp-item">▷ 国学修身类<br><span class="tp-hint">B站搜索「艺述史」，中国传统经典讲解</span></div>
+  <div class="tp-item">▷ 内心修复 / Gap成长类<br><span class="tp-hint">《认知觉醒》《被讨厌的勇气》《高效能人士七个习惯》</span></div>
+  <div class="tp-item">▷ IP内容营销类<br><span class="tp-hint">《1000个铁粉》《打造个人IP》《秒赞》<br>适配 Gap日记账号创作</span></div>
+  <div class="tp-item">▷ 国学修身类<br><span class="tp-hint">张宏杰《曾国藩家书》，贴合整套日课底层思想</span></div>
 </div>`
   },
   {
@@ -64,7 +64,7 @@ const COURSES = [
   <div class="tp-item">① 一堂创业课</div>
   <div class="tp-item">② Vikki 超级IP课</div>
   <div class="tp-item">③ 影视飓风系列课</div>
-  <div class="tp-rule">每日三选一，碎片化学完即可打卡</div>
+  <div class="tp-rule">每日三选一学习，不求一次性看完，碎片化学完即可打卡</div>
 </div>`
   },
   {
@@ -133,10 +133,12 @@ function render() {
   const today = getTodayState();
   const list = document.getElementById('checkList');
 
-  list.innerHTML = COURSES.map(c => {
+  list.innerHTML = COURSES.map((c, idx) => {
     const slotId = today[c.id + '_slot'];
+    const num = String(idx + 1).padStart(2, '0');
     return `
     <div class="check-row ${today[c.id] ? 'done' : ''}" data-id="${c.id}">
+      <span class="row-num">${num}</span>
       <span class="glyph">${c.glyph}</span>
       <span class="glyph-divider"></span>
       <span class="title">${c.title}</span>
