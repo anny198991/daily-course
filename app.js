@@ -15,16 +15,80 @@ const SLOTS = [
   { id: 's10', epoch: '子时', start: '23', end: '00' },
 ];
 
-// 8 条日课
+// 8 条日课（note 支持富文本，纯文本无链接）
 const COURSES = [
-  { id: 'c1', glyph: '息', title: '调心守静', note: '每日修心功课，完成直接打卡' },
-  { id: 'c2', glyph: '静', title: '澄怀观己', note: '静坐内观，觉察情绪，安定心神' },
-  { id: 'c3', glyph: '阅', title: '知新固本', note: '读书日课，一书未完不轻易更换' },
-  { id: 'c4', glyph: '书', title: '笔墨日修', note: '隶书练习；浏览练字课程、对标爆款账号' },
-  { id: 'c5', glyph: '学', title: '研思精进', note: '课程研习，三选一：一堂创业课、wiki-IP课、影视剧风影音课' },
-  { id: 'c6', glyph: '作', title: '一事闭环', note: '每日完成一件核心输出工作，做完自行复盘' },
-  { id: 'c7', glyph: '动', title: '舒体养身', note: '运动锻炼，乒乓球40-60分钟' },
-  { id: 'c8', glyph: '展', title: '舒筋活络', note: '拉伸放松，早起或睡前10-15分钟' },
+  {
+    id: 'c1', glyph: '息', title: '调心守静',
+    note: `<div class="tp-note">每日修心功课，完成直接打卡</div>`
+  },
+  {
+    id: 'c2', glyph: '静', title: '澄怀观己',
+    note: `<div class="tp-note">静坐内观，觉察情绪，安定心神</div>
+<div class="tp-section">
+  <div class="tp-label">B站冥想跟练</div>
+  <div class="tp-item">① 李冉14天冥想计划，重建内心秩序<br><span class="tp-hint">适合gap焦虑情绪修复</span></div>
+  <div class="tp-item">② 10分钟零基础正念冥想<br><span class="tp-hint">放下焦虑，0基础直接跟练</span></div>
+  <div class="tp-item">③ 6分钟三步呼吸空间<br><span class="tp-hint">快速平复烦躁情绪</span></div>
+  <div class="tp-rule">每日任选其一跟练，完成后勾选</div>
+</div>`
+  },
+  {
+    id: 'c3', glyph: '阅', title: '知新固本',
+    note: `<div class="tp-note">读书日课，一书未完不轻易更换</div>
+<div class="tp-section">
+  <div class="tp-label">阅读 Skill · 三条固定法则</div>
+  <div class="tp-item">① 一书不终，不启他书<br><span class="tp-hint">曾国藩读书不二，不碎片化跳读</span></div>
+  <div class="tp-item">② 问题导向阅读<br><span class="tp-hint">读前写下1个希望解决的问题，围绕问题抓取答案</span></div>
+  <div class="tp-item">③ 每日输出3条简短笔记<br><span class="tp-hint">摘抄金句或个人感悟，存入素材库</span></div>
+</div>
+<div class="tp-section">
+  <div class="tp-label">推荐书单 · 三类循环选读</div>
+  <div class="tp-item">▷ 内心修复 / Gap成长类<br><span class="tp-hint">张宏杰《曾国藩的正面与侧面》</span></div>
+  <div class="tp-item">▷ IP内容营销类<br><span class="tp-hint">《爆款文案》关健明 ·《影响力》西奥迪尼 ·《内容营销》</span></div>
+  <div class="tp-item">▷ 国学修身类<br><span class="tp-hint">B站搜索「艺述史」，中国传统经典讲解</span></div>
+</div>`
+  },
+  {
+    id: 'c4', glyph: '书', title: '笔墨日修',
+    note: `<div class="tp-note">隶书练习；浏览练字课程、对标爆款账号</div>
+<div class="tp-section">
+  <div class="tp-label">练字课程</div>
+  <div class="tp-item">陈建忠老师B站隶书课程<br><span class="tp-hint">系统临帖教学，适合隶书入门到进阶</span></div>
+  <div class="tp-item">对标账号清单、爆款案例浏览<br><span class="tp-hint">每日练字半小时，浏览对标账号作为拓展</span></div>
+</div>`
+  },
+  {
+    id: 'c5', glyph: '学', title: '研思精进',
+    note: `<div class="tp-note">课程研习，三选一</div>
+<div class="tp-section">
+  <div class="tp-item">① 一堂创业课</div>
+  <div class="tp-item">② Vikki 超级IP课</div>
+  <div class="tp-item">③ 影视飓风系列课</div>
+  <div class="tp-rule">每日三选一，碎片化学完即可打卡</div>
+</div>`
+  },
+  {
+    id: 'c6', glyph: '作', title: '一事闭环',
+    note: `<div class="tp-note">每日完成一件核心输出工作，做完自行复盘</div>
+<div class="tp-section">
+  <div class="tp-label">复盘 Skill · 自问三问</div>
+  <div class="tp-item">① 今天这件事完成结果是什么</div>
+  <div class="tp-item">② 哪里做得好</div>
+  <div class="tp-item">③ 下一次如何优化</div>
+  <div class="tp-rule">自己笔记记录即可，无需工作台表单</div>
+</div>`
+  },
+  {
+    id: 'c7', glyph: '动', title: '舒体养身',
+    note: `<div class="tp-note">运动锻炼，乒乓球40-60分钟</div>
+<div class="tp-section">
+  <div class="tp-rule">身体疲惫允许减量，优先保证微微出汗即可，不必强求时长</div>
+</div>`
+  },
+  {
+    id: 'c8', glyph: '展', title: '舒筋活络',
+    note: `<div class="tp-note">拉伸放松，早起或睡前10-15分钟</div>`
+  },
 ];
 
 // 状态：按日期存 { c1: true, c2: false, ... }
