@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#e8e4d8">
+<meta name="description" content="轻安日课 - 宋式轻中式个人日课工作台">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>竹</text></svg>">
+<title>轻安日课</title>
+<style>
+/* ==================== 设计令牌 ==================== */
+:root {
+  /* 色彩 */
+  --ink-green: #4a5d52;          /* 主色 低饱和哑光墨绿 */
+  --ink-green-deep: #3a4a41;     /* 深墨绿 文字/强调 */
+  --ink-green-soft: #6b7d72;     /* 浅灰绿 */
+  --bamboo: #8ba888;             /* 淡竹青 */
+  --bamboo-light: #b5c9b0;       /* 更浅竹青 */
+  --ochre: #b07d56;              /* 赭石 点缀 */
+  --ochre-soft: #c9996f;
+
+  --paper: #e8e4d8;              /* 宣纸米白 页面底 */
+  --paper-warm: #ece8de;         /* 暖米白 */
+  --card: rgba(252, 250, 245, 0.72);  /* 磨砂玻璃卡片 */
+  --card-solid: #faf8f3;
+
+  --text-strong: #2f3a34;        /* 近墨 */
+  --text-body: #4a534c;          /* 正文 */
+  --text-soft: #7a847b;          /* 次级 */
+  --text-faint: #a8b0a6;         /* 弱 */
+
+  --line: rgba(74, 93, 82, 0.12);     /* 细线 */
+  --line-soft: rgba(74, 93, 82, 0.07);
+
+  --radius-xl: 28px;
+  --radius-lg: 22px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+
+  --shadow-soft: 0 4px 24px rgba(74, 93, 82, 0.08);
+  --shadow-card: 0 2px 16px rgba(58, 74, 65, 0.06);
+
+  --nav-h: 58px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* 字体 */
+  --font-serif: 'Songti SC', 'STSong', 'SimSun', 'Noto Serif SC', serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--paper);
+  color: var(--text-body);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  /* 宣纸纹理 */
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(139, 168, 136, 0.04) 0%, transparent 60%),
+    radial-gradient(circle at 80% 70%, rgba(176, 125, 86, 0.03) 0%, transparent 50%);
+}
+
+/* ==================== 布局 ==================== */
+.app { display: flex; flex-direction: column; height: 100dvh; }
+
+.top-bar {
+  padding: calc(var(--safe-top) + 18px) 22px 14px;
+  flex-shrink: 0;
+}
+
+.greet-main {
+  font-family: var(--font-serif);
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--text-strong);
+  letter-spacing: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.greet-sub {
+  font-size: 13px;
+  color: var(--text-soft);
+  margin-top: 8px;
+  letter-spacing: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 38px;
+}
+
+/* 印章装饰 */
+.seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  background: var(--ochre);
+  color: #faf8f3;
+  font-family: var(--font-serif);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  flex-shrink: 0;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 18px 100px;
+}
+.content::-webkit-scrollbar { width: 0; }
+
+/* ==================== 卡片 ==================== */
+.card {
+  background: var(--card);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-soft);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.card-title {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-strong);
+  letter-spacing: 1.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title .deco {
+  color: var(--bamboo);
+  opacity: 0.7;
+  font-size: 16px;
+}
+
+/* ==================== 今日日课 ==================== */
+.daily-courses {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.course-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 4px;
+  border-bottom: 1px solid var(--line-soft);
+  transition: opacity 0.3s;
+}
+.course-item:last-child { border-bottom: none; }
+
+.course-check {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 1.8px solid var(--bamboo);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: transparent;
+  font-size: 14px;
+}
+.course-check.done {
+  background: var(--ink-green);
+  border-color: var(--ink-green);
+  color: #faf8f3;
+}
+
+.course-text { flex: 1; font-size: 15px; color: var(--text-body); }
+.course-item.done .course-text { color: var(--text-faint); text-decoration: line-through; text-decoration-color: var(--bamboo-light); }
+
+.course-ink {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  color: var(--ochre);
+  flex-shrink: 0;
+}
+
+/* ==================== 待办清单 ==================== */
+.todo-list { display: flex; flex-direction: column; gap: 0; }
+.todo-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 2px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.todo-item:last-child { border-bottom: none; }
+
+.todo-box {
+  width: 20px; height: 20px;
+  border-radius: 6px;
+  border: 1.7px solid var(--ink-green-soft);
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: transparent; font-size: 12px;
+  transition: all 0.2s;
+}
+.todo-box.done { background: var(--ink-green); border-color: var(--ink-green); color: #faf8f3; }
+.todo-body { flex: 1; min-width: 0; }
+.todo-text { font-size: 14.5px; color: var(--text-body); word-break: break-word; }
+.todo-item.done .todo-text { color: var(--text-faint); text-decoration: line-through; }
+.todo-meta { font-size: 12px; color: var(--text-faint); margin-top: 2px; }
+.todo-del {
+  background: none; border: none; color: var(--text-faint);
+  font-size: 16px; cursor: pointer; padding: 2px 6px; flex-shrink: 0;
+}
+.todo-del:active { color: var(--ochre); }
+
+/* ==================== 灵感记录 ==================== */
+.idea-grid { display: flex; flex-direction: column; gap: 10px; }
+.idea-card {
+  background: var(--card-solid);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-md);
+  padding: 13px 14px;
+  position: relative;
+}
+.idea-text { font-size: 14px; color: var(--text-body); line-height: 1.55; }
+.idea-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 8px;
+}
+.idea-time { font-size: 11.5px; color: var(--text-faint); }
+.idea-del { background: none; border: none; color: var(--text-faint); font-size: 14px; cursor: pointer; padding: 2px 4px; }
+
+/* ==================== 素材入口 ==================== */
+.material-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.material-item {
+  background: var(--card-solid);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-md);
+  padding: 16px 14px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.material-item:active { transform: scale(0.97); box-shadow: var(--shadow-card); }
+.material-icon {
+  font-size: 22px;
+  color: var(--ink-green);
+  opacity: 0.85;
+}
+.material-name { font-size: 14px; font-weight: 600; color: var(--text-strong); letter-spacing: 0.5px; }
+.material-desc { font-size: 11.5px; color: var(--text-soft); line-height: 1.4; }
+
+/* ==================== 专注时长 ==================== */
+.focus-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.focus-ring {
+  position: relative;
+  width: 132px; height: 132px;
+}
+.focus-svg { transform: rotate(-90deg); }
+.focus-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.focus-time {
+  font-family: var(--font-serif);
+  font-size: 28px; font-weight: 600; color: var(--ink-green-deep);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
+}
+.focus-label { font-size: 11.5px; color: var(--text-soft); margin-top: 2px; letter-spacing: 1px; }
+
+.focus-actions { display: flex; gap: 10px; width: 100%; }
+.btn-timer {
+  flex: 1;
+  padding: 11px;
+  border-radius: var(--radius-sm);
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 14px; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-timer.primary { background: var(--ink-green); color: #faf8f3; }
+.btn-timer.primary:active { background: var(--ink-green-deep); }
+.btn-timer.ghost { background: var(--paper-warm); color: var(--ink-green); border: 1px solid var(--line); }
+.btn-timer.ghost:active { background: var(--line-soft); }
+
+.focus-stats { display: flex; gap: 0; width: 100%; border-top: 1px solid var(--line-soft); padding-top: 12px; }
+.focus-stat { flex: 1; text-align: center; }
+.focus-stat + .focus-stat { border-left: 1px solid var(--line-soft); }
+.focus-stat-val { font-family: var(--font-serif); font-size: 19px; font-weight: 600; color: var(--text-strong); }
+.focus-stat-label { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+
+/* ==================== 本周复盘 ==================== */
+.review-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 2px; border-bottom: 1px solid var(--line-soft);
+}
+.review-row:last-child { border-bottom: none; }
+.review-label { font-size: 14px; color: var(--text-body); }
+.review-val { font-family: var(--font-serif); font-size: 16px; font-weight: 600; color: var(--ink-green-deep); }
+.review-note {
+  margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line-soft);
+  font-size: 13px; color: var(--text-soft); line-height: 1.6;
+}
+.input-line {
+  width: 100%; background: transparent; border: none;
+  border-bottom: 1px dashed var(--line);
+  padding: 8px 0; font-size: 14px; color: var(--text-body);
+  font-family: var(--font-sans);
+}
+.input-line:focus { outline: none; border-bottom-color: var(--bamboo); }
+.input-area {
+  width: 100%; background: var(--paper-warm); border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm); padding: 12px; font-size: 14px;
+  color: var(--text-body); font-family: var(--font-sans); resize: none; min-height: 64px;
+  line-height: 1.55;
+}
+.input-area:focus { outline: none; border-color: var(--bamboo); }
+
+/* ==================== 空状态 ==================== */
+.empty-state { text-align: center; padding: 26px 16px; color: var(--text-faint); }
+.empty-icon { font-size: 30px; opacity: 0.4; margin-bottom: 8px; }
+.empty-text { font-size: 13px; letter-spacing: 0.5px; }
+
+/* ==================== 对标账号 ==================== */
+.account-filter-row {
+  display: flex; gap: 8px; margin-bottom: 16px;
+}
+.filter-chip {
+  padding: 7px 14px; border-radius: 18px;
+  background: var(--card-solid); border: 1px solid var(--line);
+  font-size: 13px; color: var(--text-soft); cursor: pointer;
+  transition: all 0.15s;
+}
+.filter-chip.active {
+  background: var(--ink-green); color: #faf8f3; border-color: var(--ink-green);
+}
+
+.account-card {
+  background: var(--card);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: transform 0.15s;
+  box-shadow: var(--shadow-soft);
+}
+.account-card:active { transform: scale(0.98); }
+
+.account-card-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px;
+}
+.account-name {
+  font-size: 17px; font-weight: 600; color: var(--text-strong); letter-spacing: 1px;
+}
+.account-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 5px 0; font-size: 13.5px;
+}
+.account-key { color: var(--text-soft); min-width: 50px; }
+.account-val { color: var(--text-body); text-align: right; flex: 1; }
+.account-card-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line-soft);
+}
+.account-arrow { color: var(--text-faint); font-size: 20px; }
+
+.tag-platform {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 2px 9px; border-radius: 5px; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.tag-douyin { background: rgba(176, 125, 86, 0.15); color: var(--ochre); }
+.tag-xhs { background: rgba(139, 168, 136, 0.18); color: var(--ink-green); }
+
+.tag-status {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.tag-todo { background: rgba(249, 181, 114, 0.15); color: #c98f4e; }
+.tag-doing { background: rgba(79, 195, 247, 0.15); color: #4fc3f7; }
+.tag-done { background: rgba(78, 204, 163, 0.15); color: var(--success); }
+
+/* 单选 chip */
+.radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.radio-chip {
+  padding: 7px 14px; border-radius: 18px;
+  border: 1px solid var(--line); background: var(--card-solid);
+  font-size: 13px; color: var(--text-soft); cursor: pointer;
+  transition: all 0.15s; -webkit-user-select: none; user-select: none;
+}
+.radio-chip.active {
+  background: var(--ink-green); border-color: var(--ink-green); color: #faf8f3;
+}
+
+/* 详情页 */
+.account-detail { padding: 4px 0; }
+.detail-head {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+}
+.detail-name {
+  font-size: 20px; font-weight: 600; color: var(--text-strong); letter-spacing: 1px;
+}
+.detail-section { margin-bottom: 14px; }
+.detail-label {
+  font-size: 12px; color: var(--text-soft); margin-bottom: 5px;
+  letter-spacing: 1px;
+}
+.detail-text {
+  font-size: 14.5px; color: var(--text-body); line-height: 1.6;
+}
+.btn-row { display: flex; gap: 10px; }
+
+/* ==================== FAB & Sheet ==================== */
+.fab {
+  position: fixed;
+
+  bottom: calc(var(--nav-h) + var(--safe-bottom) + 20px);
+  right: 20px;
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  background: var(--ink-green);
+  color: #faf8f3;
+  border: none; font-size: 24px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 20px rgba(58, 74, 65, 0.25);
+  cursor: pointer; z-index: 50;
+  transition: transform 0.15s;
+}
+.fab:active { transform: scale(0.92); }
+.fab.hidden { display: none !important; }
+
+.overlay {
+  position: fixed; inset: 0; background: rgba(47, 58, 52, 0.28);
+  z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.25s;
+  backdrop-filter: blur(2px);
+}
+.overlay.show { opacity: 1; pointer-events: auto; }
+
+.sheet {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--paper-warm);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  max-height: 86vh; overflow-y: auto; z-index: 201;
+  transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  padding-bottom: var(--safe-bottom);
+  box-shadow: 0 -4px 30px rgba(58, 74, 65, 0.12);
+}
+.sheet.show { transform: translateY(0); }
+.sheet-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 22px 14px; position: sticky; top: 0;
+  background: var(--paper-warm); z-index: 1;
+}
+.sheet-title { font-family: var(--font-serif); font-size: 19px; font-weight: 600; color: var(--text-strong); letter-spacing: 1px; }
+.sheet-close { background: none; border: none; color: var(--text-soft); font-size: 22px; cursor: pointer; padding: 2px 6px; }
+.sheet-body { padding: 8px 22px 28px; }
+.sheet-grip { width: 38px; height: 4px; border-radius: 2px; background: var(--line); margin: 8px auto 0; }
+
+/* ==================== 通用表单 ==================== */
+.field { margin-bottom: 16px; }
+.field-label { font-size: 13px; color: var(--text-soft); margin-bottom: 7px; letter-spacing: 0.5px; }
+.field-input, .field-area {
+  width: 100%; background: var(--card-solid);
+  border: 1px solid var(--line); border-radius: var(--radius-sm);
+  padding: 13px 14px; font-size: 15px; color: var(--text-body);
+  font-family: var(--font-sans);
+}
+.field-input:focus, .field-area:focus { outline: none; border-color: var(--bamboo); }
+.field-area { resize: none; min-height: 80px; line-height: 1.55; }
+
+.btn-primary {
+  width: 100%; padding: 14px; border: none; border-radius: var(--radius-sm);
+  background: var(--ink-green); color: #faf8f3; font-size: 15px; font-weight: 600;
+  font-family: var(--font-sans); cursor: pointer; letter-spacing: 1px;
+  transition: background 0.2s;
+}
+.btn-primary:active { background: var(--ink-green-deep); }
+
+/* 线稿小符号 */
+.glyph {
+  position: absolute; color: var(--bamboo); opacity: 0.13;
+  pointer-events: none; font-family: var(--font-serif); user-select: none;
+  line-height: 1;
+}
+.glyph-bamboo { top: 6px; right: 50px; font-size: 32px; transform: rotate(12deg); }
+.glyph-brush { bottom: 14px; right: 18px; font-size: 22px; opacity: 0.12; }
+.glyph-fan { bottom: 12px; left: 16px; font-size: 20px; opacity: 0.12; }
+
+/* 底部导航 */
+.bottom-nav {
+  height: calc(var(--nav-h) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: rgba(252, 250, 245, 0.85);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--line-soft);
+  display: flex; align-items: stretch; flex-shrink: 0; z-index: 100;
+}
+.nav-tab {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; color: var(--text-faint); cursor: pointer; position: relative;
+  -webkit-user-select: none; user-select: none;
+}
+.nav-tab.active { color: var(--ink-green); }
+.nav-tab.active::before {
+  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 22px; height: 2px; border-radius: 2px; background: var(--ink-green);
+}
+.nav-ico { font-size: 19px; line-height: 1; }
+.nav-lbl { font-size: 10px; letter-spacing: 0.5px; }
+
+/* 印章标签 */
+.tag-seal {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 2px 8px; border-radius: 5px; background: var(--ochre);
+  color: #faf8f3; font-family: var(--font-serif); font-size: 11px; font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.text-ochre { color: var(--ochre); }
+.text-bamboo { color: var(--bamboo); }
+.text-soft { color: var(--text-soft); }
+.text-faint { color: var(--text-faint); }
+.serif { font-family: var(--font-serif); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 顶部欢迎 -->
+  <div class="top-bar">
+    <div class="greet-main">
+      <span class="seal">課</span>
+      轻安日课
+    </div>
+    <div class="greet-sub">每日有常，慢慢来</div>
+  </div>
+
+  <!-- 内容 -->
+  <div class="content" id="content">
+
+    <!-- 今日日课 -->
+    <div class="card">
+      <div class="glyph glyph-bamboo">竹</div>
+      <div class="card-head">
+        <div class="card-title"><span class="deco">☯</span>今日日课</div>
+        <span class="tag-seal">常课</span>
+      </div>
+      <div class="daily-courses" id="dailyCourses"></div>
+    </div>
+
+    <!-- 待办清单 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><span class="deco">✎</span>待办清单</div>
+        <span class="text-faint text-sm" id="todoCount"></span>
+      </div>
+      <div class="todo-list" id="todoList"></div>
+    </div>
+
+    <!-- 灵感记录 -->
+    <div class="card">
+      <div class="glyph glyph-brush">笔</div>
+      <div class="card-head">
+        <div class="card-title"><span class="deco">❀</span>灵感记录</div>
+      </div>
+      <div class="idea-grid" id="ideaGrid"></div>
+    </div>
+
+    <!-- 素材入口 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><span class="deco">▣</span>素材入口</div>
+      </div>
+      <div class="material-grid" id="materialGrid"></div>
+    </div>
+
+    <!-- 专注时长 -->
+    <div class="card">
+      <div class="glyph glyph-fan">扇</div>
+      <div class="card-head">
+        <div class="card-title"><span class="deco">⏳</span>专注时长</div>
+      </div>
+      <div class="focus-wrap">
+        <div class="focus-ring">
+          <svg class="focus-svg" width="132" height="132" viewBox="0 0 132 132">
+            <circle cx="66" cy="66" r="58" fill="none" stroke="var(--line)" stroke-width="8"/>
+            <circle id="focusArc" cx="66" cy="66" r="58" fill="none" stroke="var(--ink-green)" stroke-width="8"
+              stroke-linecap="round" stroke-dasharray="364.4" stroke-dashoffset="364.4" style="transition: stroke-dashoffset 0.5s"/>
+          </svg>
+          <div class="focus-center">
+            <div class="focus-time" id="focusTime">25:00</div>
+            <div class="focus-label">专注</div>
+          </div>
+        </div>
+        <div class="focus-actions">
+          <button class="btn-timer primary" id="timerToggle" onclick="toggleTimer()">开始</button>
+          <button class="btn-timer ghost" onclick="resetTimer()">重置</button>
+        </div>
+        <div class="focus-stats">
+          <div class="focus-stat">
+            <div class="focus-stat-val" id="statToday">0</div>
+            <div class="focus-stat-label">今日（分）</div>
+          </div>
+          <div class="focus-stat">
+            <div class="focus-stat-val" id="statWeek">0</div>
+            <div class="focus-stat-label">本周（分）</div>
+          </div>
+          <div class="focus-stat">
+            <div class="focus-stat-val" id="statSessions">0</div>
+            <div class="focus-stat-label">今日次数</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 本周复盘 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><span class="deco">◈</span>本周复盘</div>
+        <span class="text-faint text-sm" id="weekRange"></span>
+      </div>
+      <div class="review-row">
+        <span class="review-label">完成日课</span>
+        <span class="review-val" id="rvCourse">0/3</span>
+      </div>
+      <div class="review-row">
+        <span class="review-label">完成待办</span>
+        <span class="review-val" id="rvTodo">0</span>
+      </div>
+      <div class="review-row">
+        <span class="review-label">灵感记录</span>
+        <span class="review-val" id="rvIdea">0</span>
+      </div>
+      <div class="review-row">
+        <span class="review-label">专注总时长</span>
+        <span class="review-val" id="rvFocus">0分</span>
+      </div>
+      <div class="review-note">
+        <div class="field-label" style="margin-bottom:4px">本周小结</div>
+        <textarea class="input-area" id="reviewNote" placeholder="记下这周的感受，慢慢来..."></textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 对标账号专属视图（独立页面，默认隐藏） -->
+  <div id="accountsView" style="display:none;padding:4px 18px 100px"></div>
+
+  <!-- FAB -->
+  <button class="fab hidden" id="fab" onclick="onFab()">＋</button>
+
+  <!-- 底部导航 -->
+  <div class="bottom-nav">
+    <div class="nav-tab active" onclick="switchTab('home')">
+      <div class="nav-ico">🏡</div><div class="nav-lbl">日课</div>
+    </div>
+    <div class="nav-tab" onclick="switchTab('todo')">
+      <div class="nav-ico">✓</div><div class="nav-lbl">待办</div>
+    </div>
+    <div class="nav-tab" onclick="switchTab('idea')">
+      <div class="nav-ico">✿</div><div class="nav-lbl">灵感</div>
+    </div>
+    <div class="nav-tab" onclick="switchTab('material')">
+      <div class="nav-ico">▣</div><div class="nav-lbl">素材</div>
+    </div>
+    <div class="nav-tab" onclick="switchTab('focus')">
+      <div class="nav-ico">⏳</div><div class="nav-lbl">专注</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 弹窗 -->
+<div class="overlay" id="overlay" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-grip"></div>
+  <div class="sheet-head">
+    <div class="sheet-title" id="sheetTitle"></div>
+    <button class="sheet-close" onclick="closeSheet()">✕</button>
+  </div>
+  <div class="sheet-body" id="sheetBody"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
