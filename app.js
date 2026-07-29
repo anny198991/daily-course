@@ -1,7 +1,7 @@
 // ==================== 数据 ====================
 const STORE = 'qing-an-rikei-v2';
 
-// 7 条日课
+// 8 条日课
 const COURSES = [
   { id: 'c1', glyph: '息', title: '调心守静', note: '每日修心功课，完成直接打卡' },
   { id: 'c2', glyph: '静', title: '澄怀观己', note: '静坐内观，觉察情绪，安定心神' },
@@ -10,6 +10,7 @@ const COURSES = [
   { id: 'c5', glyph: '学', title: '研思精进', note: '课程研习，三选一：一堂创业课、wiki-IP课、影视剧风影音课' },
   { id: 'c6', glyph: '作', title: '一事闭环', note: '每日完成一件核心输出工作，做完自行复盘' },
   { id: 'c7', glyph: '动', title: '舒体养身', note: '运动锻炼，乒乓球40-60分钟' },
+  { id: 'c8', glyph: '展', title: '舒筋活络', note: '拉伸放松，早起或睡前10-15分钟' },
 ];
 
 // 状态：按日期存 { c1: true, c2: false, ... }
