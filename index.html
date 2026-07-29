@@ -254,6 +254,36 @@ body {
   opacity: 0.7;
 }
 
+/* 复盘按钮（c6 专用）*/
+.review-btn {
+  flex-shrink: 0;
+  font-family: var(--font-serif);
+  font-size: 12px;
+  color: var(--ochre);
+  letter-spacing: 1px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(176, 125, 86, 0.3);
+  border-radius: 5px;
+  background: rgba(176, 125, 86, 0.04);
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1;
+  position: relative;
+  z-index: 15;
+}
+.review-btn:active {
+  background: rgba(176, 125, 86, 0.12);
+}
+.review-btn.filled {
+  background: var(--ochre);
+  color: #faf8f3;
+  border-color: var(--ochre);
+}
+
 /* 悬浮备注 */
 .tooltip {
   position: absolute;
@@ -441,6 +471,60 @@ body {
 }
 .time-option.selected .opt-check { opacity: 1; }
 
+/* 复盘表单 */
+.review-sheet {
+  max-height: 80vh;
+}
+.review-form {
+  padding: 4px 4px 8px;
+}
+.review-field {
+  margin-bottom: 14px;
+}
+.review-field:last-child {
+  margin-bottom: 4px;
+}
+.review-label {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  color: var(--text-strong);
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+.review-sub {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--text-faint);
+  letter-spacing: 0;
+  font-weight: normal;
+}
+.review-input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  color: var(--text-body);
+  line-height: 1.6;
+  background: rgba(250, 248, 243, 0.6);
+  resize: none;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+  -webkit-appearance: none;
+}
+.review-input:focus {
+  border-color: var(--bamboo);
+  background: var(--card);
+}
+.review-input::placeholder {
+  color: var(--text-faint);
+  opacity: 0.6;
+}
+
 /* 底部箴言 */
 .footnote {
   margin-top: 40px;
@@ -512,6 +596,33 @@ body {
     <span class="sheet-clear" id="sheetClear">清除</span>
   </div>
   <div id="timeOptions"></div>
+</div>
+
+<!-- 底部复盘表单（c6 专用）-->
+<div class="time-sheet-backdrop" id="reviewBackdrop"></div>
+<div class="time-sheet review-sheet" id="reviewSheet">
+  <div class="sheet-header">
+    <span class="sheet-title">作 · 一事闭环 · KPT复盘</span>
+    <span class="sheet-clear" id="reviewSave">保存</span>
+  </div>
+  <div class="review-form">
+    <div class="review-field">
+      <label class="review-label">今日核心做的一件事</label>
+      <textarea class="review-input" id="revThing" rows="2" placeholder="今天最重要的那件事…"></textarea>
+    </div>
+    <div class="review-field">
+      <label class="review-label">K · Keep<span class="review-sub">做得好的，下次保持</span></label>
+      <textarea class="review-input" id="revKeep" rows="3" placeholder="哪里做得好，值得保持的…"></textarea>
+    </div>
+    <div class="review-field">
+      <label class="review-label">P · Problem<span class="review-sub">卡在哪，结果与预期差距</span></label>
+      <textarea class="review-input" id="revProblem" rows="3" placeholder="遇到什么问题，卡在哪里…"></textarea>
+    </div>
+    <div class="review-field">
+      <label class="review-label">T · Try<span class="review-sub">下次尝试什么新做法</span></label>
+      <textarea class="review-input" id="revTry" rows="3" placeholder="下次想试什么…"></textarea>
+    </div>
+  </div>
 </div>
 
 <script src="app.js"></script>
