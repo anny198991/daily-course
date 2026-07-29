@@ -70,13 +70,13 @@ const COURSES = [
   },
   {
     id: 'c6', glyph: '作', title: '一事闭环',
-    note: `<div class="tp-note">每日完成一件核心输出工作，做完自行复盘</div>
+    note: `<div class="tp-note">每日完成一件核心输出工作，做完复盘</div>
 <div class="tp-section">
-  <div class="tp-label">复盘 Skill · 自问三问</div>
-  <div class="tp-item">① 今天这件事完成结果是什么</div>
-  <div class="tp-item">② 哪里做得好</div>
-  <div class="tp-item">③ 下一次如何优化</div>
-  <div class="tp-rule">自己笔记记录即可，无需工作台表单</div>
+  <div class="tp-label">复盘 Skill · KPT 三栏</div>
+  <div class="tp-item">K · Keep 做得好的，下次保持</div>
+  <div class="tp-item">P · Problem 卡在哪，结果与预期差距</div>
+  <div class="tp-item">T · Try 下次尝试什么新做法</div>
+  <div class="tp-rule">点右侧「修」按钮打开复盘表单填写</div>
 </div>`
   },
   {
@@ -141,6 +141,8 @@ function render() {
   list.innerHTML = COURSES.map((c, idx) => {
     const slotId = today[c.id + '_slot'];
     const num = String(idx + 1).padStart(2, '0');
+    const hasReview = c.id === 'c6';
+    const reviewFilled = today.c6_review && (today.c6_review.thing || today.c6_review.keep || today.c6_review.problem || today.c6_review.try);
     return `
     <div class="check-row ${today[c.id] ? 'done' : ''}" data-id="${c.id}">
       <span class="row-num">${num}</span>
@@ -150,6 +152,7 @@ function render() {
       <span class="time-tag ${slotId ? 'has-time' : ''}" data-course="${c.id}">
         ${slotLabel(slotId)}
       </span>
+      ${hasReview ? `<span class="review-btn ${reviewFilled ? 'filled' : ''}" data-course="${c.id}">修</span>` : ''}
       <span class="checkbox">✓</span>
       <div class="tooltip">${c.note}</div>
     </div>
@@ -167,13 +170,23 @@ function render() {
       openTimeSheet(row.dataset.id);
     });
 
+    // 复盘按钮点击 → 弹底部复盘表单（仅 c6）
+    const reviewBtn = row.querySelector('.review-btn');
+    if (reviewBtn) {
+      reviewBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openReviewSheet();
+      });
+    }
+
     row.addEventListener('click', (e) => {
       if (row.classList.contains('show-tooltip')) {
         row.classList.remove('show-tooltip');
         return;
       }
-      // 点的是时间标签就不切换勾选
+      // 点的是时间标签或复盘按钮就不切换勾选
       if (e.target.closest('.time-tag')) return;
+      if (e.target.closest('.review-btn')) return;
       toggle(row.dataset.id);
     });
 
@@ -260,6 +273,43 @@ document.getElementById('sheetClear').addEventListener('click', () => {
   closeTimeSheet();
   render();
 });
+
+// ==================== 底部复盘表单（c6 专用）====================
+function openReviewSheet() {
+  const today = getTodayState();
+  if (!today.c6_review) today.c6_review = {};
+  const r = today.c6_review;
+
+  document.getElementById('reviewSheet').classList.add('show');
+  document.getElementById('reviewBackdrop').classList.add('show');
+
+  // 填入已存数据
+  document.getElementById('revThing').value = r.thing || '';
+  document.getElementById('revKeep').value = r.keep || '';
+  document.getElementById('revProblem').value = r.problem || '';
+  document.getElementById('revTry').value = r.try || '';
+}
+
+function closeReviewSheet() {
+  document.getElementById('reviewSheet').classList.remove('show');
+  document.getElementById('reviewBackdrop').classList.remove('show');
+}
+
+function saveReview() {
+  const today = getTodayState();
+  today.c6_review = {
+    thing: document.getElementById('revThing').value.trim(),
+    keep: document.getElementById('revKeep').value.trim(),
+    problem: document.getElementById('revProblem').value.trim(),
+    try: document.getElementById('revTry').value.trim(),
+  };
+  save();
+  closeReviewSheet();
+  render();
+}
+
+document.getElementById('reviewBackdrop').addEventListener('click', closeReviewSheet);
+document.getElementById('reviewSave').addEventListener('click', saveReview);
 
 function toggle(id) {
   const today = getTodayState();
