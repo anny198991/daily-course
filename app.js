@@ -26,9 +26,9 @@ const COURSES = [
     note: `<div class="tp-note">静坐内观，觉察情绪，安定心神</div>
 <div class="tp-section">
   <div class="tp-label">B站冥想跟练</div>
-  <div class="tp-item">① 李冉14天冥想计划，重建内心秩序<br><span class="tp-hint">适合gap焦虑情绪修复</span></div>
-  <div class="tp-item">② 10分钟零基础正念冥想<br><span class="tp-hint">放下焦虑，0基础直接跟练</span></div>
-  <div class="tp-item">③ 6分钟三步呼吸空间<br><span class="tp-hint">快速平复烦躁情绪</span></div>
+  <div class="tp-item">① 李冉14天冥想计划，重建内心秩序<br><span class="tp-hint">适合gap焦虑情绪修复</span><span class="tp-link">bilibili.com/cheese/play/ep185272</span></div>
+  <div class="tp-item">② 10分钟零基础正念冥想<br><span class="tp-hint">放下焦虑，0基础直接跟练</span><span class="tp-link">bilibili.com/video/BV19G4y1x72E</span></div>
+  <div class="tp-item">③ 6分钟三步呼吸空间<br><span class="tp-hint">快速平复烦躁情绪</span><span class="tp-link">bilibili.com/opus/382432679837174053</span></div>
   <div class="tp-rule">每日任选其一跟练，完成后勾选</div>
 </div>`
   },
@@ -45,7 +45,7 @@ const COURSES = [
   <div class="tp-label">推荐书单 · 三类循环选读</div>
   <div class="tp-item">▷ 内心修复 / Gap成长类<br><span class="tp-hint">《认知觉醒》《被讨厌的勇气》《高效能人士七个习惯》</span></div>
   <div class="tp-item">▷ IP内容营销类<br><span class="tp-hint">《1000个铁粉》《打造个人IP》《秒赞》<br>适配 Gap日记账号创作</span></div>
-  <div class="tp-item">▷ 国学修身类<br><span class="tp-hint">张宏杰《曾国藩家书》，贴合整套日课底层思想</span></div>
+  <div class="tp-item">▷ 国学修身类<br><span class="tp-hint">张宏杰《曾国藩家书》，贴合整套日课底层思想<br>B站「艺述史」每日文化小知识</span><span class="tp-link">space.bilibili.com/702465029</span></div>
 </div>`
   },
   {
@@ -53,7 +53,8 @@ const COURSES = [
     note: `<div class="tp-note">隶书练习；浏览练字课程、对标爆款账号</div>
 <div class="tp-section">
   <div class="tp-label">练字课程</div>
-  <div class="tp-item">陈建忠老师B站隶书课程<br><span class="tp-hint">系统临帖教学，适合隶书入门到进阶</span></div>
+  <div class="tp-item">陈建忠老师书法课程<br><span class="tp-hint">系统临帖教学，隶书入门到进阶</span><span class="tp-link">space.bilibili.com/2079882980</span></div>
+  <div class="tp-item">陈忠建书法学堂（隶书更全）<br><span class="tp-hint">曹全碑等隶书系统教程，72万粉</span><span class="tp-link">space.bilibili.com/278761627</span></div>
   <div class="tp-item">对标账号清单、爆款案例浏览<br><span class="tp-hint">每日练字半小时，浏览对标账号作为拓展</span></div>
 </div>`
   },
@@ -61,9 +62,9 @@ const COURSES = [
     id: 'c5', glyph: '学', title: '研思精进',
     note: `<div class="tp-note">课程研习，三选一</div>
 <div class="tp-section">
-  <div class="tp-item">① 一堂创业课</div>
-  <div class="tp-item">② Vikki 超级IP课</div>
-  <div class="tp-item">③ 影视飓风系列课</div>
+  <div class="tp-item">① 一堂创业课<br><span class="tp-link">yitang.top</span></div>
+  <div class="tp-item">② Vikki 超级IP课<br><span class="tp-link">space.bilibili.com/571526162</span></div>
+  <div class="tp-item">③ 影视飓风剪辑必修课<br><span class="tp-link">bilibili.com/cheese/play/ss847199644</span></div>
   <div class="tp-rule">每日三选一学习，不求一次性看完，碎片化学完即可打卡</div>
 </div>`
   },
@@ -87,7 +88,11 @@ const COURSES = [
   },
   {
     id: 'c8', glyph: '展', title: '舒筋活络',
-    note: `<div class="tp-note">拉伸放松，早起或睡前10-15分钟</div>`
+    note: `<div class="tp-note">拉伸放松，早起或睡前10-15分钟</div>
+<div class="tp-section">
+  <div class="tp-label">B站拉伸跟练</div>
+  <div class="tp-item">MIZI 10分钟全身拉伸<br><span class="tp-hint">站立式，无需垫子，提升柔韧性</span><span class="tp-link">bilibili.com/video/BV1JAuczkEwQ</span></div>
+</div>`
   },
 ];
 
