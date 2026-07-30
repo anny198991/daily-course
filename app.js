@@ -140,9 +140,11 @@ function render() {
   const today = getTodayState();
   const list = document.getElementById('checkList');
 
+  const CN_NUMS = ['壹','贰','叁','肆','伍','陆','柒','捌'];
+
   list.innerHTML = COURSES.map((c, idx) => {
     const slotId = today[c.id + '_slot'];
-    const num = String(idx + 1).padStart(2, '0');
+    const num = CN_NUMS[idx];
     const hasReview = c.id === 'c6';
     const reviewFilled = today.c6_review && (today.c6_review.thing || today.c6_review.keep || today.c6_review.problem || today.c6_review.try);
     const hasSport = c.id === 'c7';
