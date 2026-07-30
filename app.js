@@ -81,9 +81,11 @@ const COURSES = [
   },
   {
     id: 'c7', glyph: '动', title: '舒体养身',
-    note: `<div class="tp-note">运动锻炼，乒乓球40-60分钟</div>
+    note: `<div class="tp-note">运动锻炼，每日任选一项</div>
 <div class="tp-section">
-  <div class="tp-rule">身体疲惫允许减量，优先保证微微出汗即可，不必强求时长</div>
+  <div class="tp-label">运动项目</div>
+  <div class="tp-item">跑步 / 跳绳 / 羽毛球 / 乒乓球 / 拉伸 / 其他</div>
+  <div class="tp-rule">身体疲惫允许减量，优先保证微微出汗即可，不必强求时长。点右侧「选」按钮选择今日项目</div>
 </div>`
   },
   {
@@ -143,6 +145,8 @@ function render() {
     const num = String(idx + 1).padStart(2, '0');
     const hasReview = c.id === 'c6';
     const reviewFilled = today.c6_review && (today.c6_review.thing || today.c6_review.keep || today.c6_review.problem || today.c6_review.try);
+    const hasSport = c.id === 'c7';
+    const sportFilled = !!today.c7_sport;
     return `
     <div class="check-row ${today[c.id] ? 'done' : ''}" data-id="${c.id}">
       <span class="row-num">${num}</span>
@@ -153,6 +157,7 @@ function render() {
         ${slotLabel(slotId)}
       </span>
       ${hasReview ? `<span class="review-btn ${reviewFilled ? 'filled' : ''}" data-course="${c.id}">修</span>` : ''}
+      ${hasSport ? `<span class="review-btn sport-btn ${sportFilled ? 'filled' : ''}" data-course="${c.id}">选</span>` : ''}
       <span class="checkbox">✓</span>
       <div class="tooltip">${c.note}</div>
     </div>
@@ -170,12 +175,19 @@ function render() {
       openTimeSheet(row.dataset.id);
     });
 
-    // 复盘按钮点击 → 弹底部复盘表单（仅 c6）
-    const reviewBtn = row.querySelector('.review-btn');
+    // 复盘按钮点击 → 弹底部复盘表单（c6）或运动选择（c7）
+    const reviewBtn = row.querySelector('.review-btn:not(.sport-btn)');
     if (reviewBtn) {
       reviewBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         openReviewSheet();
+      });
+    }
+    const sportBtn = row.querySelector('.sport-btn');
+    if (sportBtn) {
+      sportBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openSportSheet();
       });
     }
 
@@ -184,7 +196,7 @@ function render() {
         row.classList.remove('show-tooltip');
         return;
       }
-      // 点的是时间标签或复盘按钮就不切换勾选
+      // 点的是时间标签、复盘按钮或运动按钮就不切换勾选
       if (e.target.closest('.time-tag')) return;
       if (e.target.closest('.review-btn')) return;
       toggle(row.dataset.id);
@@ -310,6 +322,80 @@ function saveReview() {
 
 document.getElementById('reviewBackdrop').addEventListener('click', closeReviewSheet);
 document.getElementById('reviewSave').addEventListener('click', saveReview);
+
+// ==================== 底部运动选择表单（c7 专用）====================
+const SPORTS = ['跑步', '跳绳', '羽毛球', '乒乓球', '拉伸', '其他'];
+
+function openSportSheet() {
+  const today = getTodayState();
+  const current = today.c7_sport || '';
+  const isOther = current && !SPORTS.slice(0, 5).includes(current);
+
+  document.getElementById('sportSheet').classList.add('show');
+  document.getElementById('sportBackdrop').classList.add('show');
+
+  // 渲染选项
+  const html = SPORTS.map(s => {
+    const selected = (s === '其他' && isOther) || s === current;
+    return `<div class="time-option sport-option-item ${selected ? 'selected' : ''}" data-sport="${s}">
+      <span class="opt-epoch">${s}</span>
+      <span class="opt-check">✓</span>
+    </div>`;
+  }).join('');
+  document.getElementById('sportOptions').innerHTML = html;
+
+  // 其他输入框
+  const otherBox = document.getElementById('sportOtherBox');
+  const otherInput = document.getElementById('sportOtherInput');
+  if (isOther) {
+    otherBox.style.display = 'block';
+    otherInput.value = current;
+  } else {
+    otherBox.style.display = 'none';
+    otherInput.value = '';
+  }
+
+  // 绑定选项
+  document.querySelectorAll('.sport-option-item').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const val = opt.dataset.sport;
+      document.querySelectorAll('.sport-option-item').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      if (val === '其他') {
+        otherBox.style.display = 'block';
+        otherInput.focus();
+      } else {
+        otherBox.style.display = 'none';
+        today.c7_sport = val;
+        save();
+        closeSportSheet();
+        render();
+      }
+    });
+  });
+}
+
+function closeSportSheet() {
+  document.getElementById('sportSheet').classList.remove('show');
+  document.getElementById('sportBackdrop').classList.remove('show');
+}
+
+document.getElementById('sportBackdrop').addEventListener('click', closeSportSheet);
+document.getElementById('sportSave').addEventListener('click', () => {
+  const today = getTodayState();
+  const selected = document.querySelector('.sport-option-item.selected');
+  if (!selected) { closeSportSheet(); return; }
+  const val = selected.dataset.sport;
+  if (val === '其他') {
+    const custom = document.getElementById('sportOtherInput').value.trim();
+    today.c7_sport = custom || '其他';
+  } else {
+    today.c7_sport = val;
+  }
+  save();
+  closeSportSheet();
+  render();
+});
 
 function toggle(id) {
   const today = getTodayState();
