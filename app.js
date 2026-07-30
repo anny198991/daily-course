@@ -138,91 +138,118 @@ function slotLabel(slotId) {
 
 function render() {
   const today = getTodayState();
-  const list = document.getElementById('checkList');
-
+  const rail = document.getElementById('leftRail');
+  const cardList = document.getElementById('cardList');
   const CN_NUMS = ['壹','贰','叁','肆','伍','陆','柒','捌'];
 
-  list.innerHTML = COURSES.map((c, idx) => {
+  // 左列导航
+  rail.innerHTML = COURSES.map((c, idx) => `
+    <div class="rail-item ${today[c.id] ? 'done' : ''}" data-id="${c.id}">
+      <span class="rail-num">${CN_NUMS[idx]}</span>
+      <span class="rail-glyph">${c.glyph}</span>
+    </div>
+  `).join('');
+
+  // 右列卡片
+  cardList.innerHTML = COURSES.map((c, idx) => {
     const slotId = today[c.id + '_slot'];
-    const num = CN_NUMS[idx];
     const hasReview = c.id === 'c6';
     const reviewFilled = today.c6_review && (today.c6_review.thing || today.c6_review.keep || today.c6_review.problem || today.c6_review.try);
     const hasSport = c.id === 'c7';
     const sportFilled = !!today.c7_sport;
+    const slot = getSlotById(slotId);
+    const timeLabel = slot ? `${slot.epoch} ${slot.start}-${slot.end}` : '选时段';
     return `
-    <div class="check-row ${today[c.id] ? 'done' : ''}" data-id="${c.id}">
-      <span class="row-num">${num}</span>
-      <span class="glyph">${c.glyph}</span>
-      <span class="glyph-divider"></span>
-      <span class="title">${c.title}</span>
-      <span class="time-tag ${slotId ? 'has-time' : ''}" data-course="${c.id}">
-        ${slotLabel(slotId)}
-      </span>
-      ${hasReview ? `<span class="review-btn ${reviewFilled ? 'filled' : ''}" data-course="${c.id}">修</span>` : ''}
-      ${hasSport ? `<span class="review-btn sport-btn ${sportFilled ? 'filled' : ''}" data-course="${c.id}">选</span>` : ''}
-      <span class="checkbox">✓</span>
-      <div class="tooltip">${c.note}</div>
+    <div class="course-card ${today[c.id] ? 'done' : ''}" data-id="${c.id}" id="card-${c.id}">
+      <div class="card-header">
+        <span class="card-glyph">${c.glyph}</span>
+        <span class="card-title">${c.title}</span>
+        <span class="card-checkbox" data-action="toggle">✓</span>
+      </div>
+      <div class="card-actions">
+        <span class="card-time-tag ${slotId ? 'has-time' : ''}" data-action="time">${timeLabel}</span>
+        ${hasReview ? `<span class="card-action-btn ${reviewFilled ? 'filled' : ''}" data-action="review">修·复盘</span>` : ''}
+        ${hasSport ? `<span class="card-action-btn ${sportFilled ? 'filled' : ''}" data-action="sport">选·${today.c7_sport || '项目'}</span>` : ''}
+      </div>
+      <div class="card-body">${c.note}</div>
     </div>
   `}).join('');
 
-  // 绑定：单击切换勾选，长按显示备注
-  let longPressTimer = null;
-
-  list.querySelectorAll('.check-row').forEach(row => {
-    const clear = () => { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; } };
-
-    // 时间标签点击 → 弹底部选择器
-    row.querySelector('.time-tag').addEventListener('click', (e) => {
+  // 绑定卡片交互
+  cardList.querySelectorAll('.course-card').forEach(card => {
+    // 勾选框点击
+    card.querySelector('[data-action="toggle"]').addEventListener('click', (e) => {
       e.stopPropagation();
-      openTimeSheet(row.dataset.id);
+      toggle(card.dataset.id);
     });
 
-    // 复盘按钮点击 → 弹底部复盘表单（c6）或运动选择（c7）
-    const reviewBtn = row.querySelector('.review-btn:not(.sport-btn)');
+    // 时间标签点击
+    const timeTag = card.querySelector('[data-action="time"]');
+    if (timeTag) {
+      timeTag.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openTimeSheet(card.dataset.id);
+      });
+    }
+
+    // 复盘按钮
+    const reviewBtn = card.querySelector('[data-action="review"]');
     if (reviewBtn) {
       reviewBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         openReviewSheet();
       });
     }
-    const sportBtn = row.querySelector('.sport-btn');
+
+    // 运动按钮
+    const sportBtn = card.querySelector('[data-action="sport"]');
     if (sportBtn) {
       sportBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         openSportSheet();
       });
     }
+  });
 
-    row.addEventListener('click', (e) => {
-      if (row.classList.contains('show-tooltip')) {
-        row.classList.remove('show-tooltip');
-        return;
+  // 左列点击 → 右列滚动 + 高亮
+  let activeId = null;
+  rail.querySelectorAll('.rail-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const id = item.dataset.id;
+      const targetCard = document.getElementById('card-' + id);
+      if (targetCard) {
+        targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
-      // 点的是时间标签、复盘按钮或运动按钮就不切换勾选
-      if (e.target.closest('.time-tag')) return;
-      if (e.target.closest('.review-btn')) return;
-      toggle(row.dataset.id);
+      // 高亮左列
+      rail.querySelectorAll('.rail-item').forEach(r => r.classList.remove('active'));
+      item.classList.add('active');
     });
-
-    // 触屏长按
-    row.addEventListener('touchstart', () => {
-      clear();
-      longPressTimer = setTimeout(() => {
-        document.querySelectorAll('.check-row.show-tooltip').forEach(r => r.classList.remove('show-tooltip'));
-        row.classList.add('show-tooltip');
-      }, 500);
-    }, { passive: true });
-    row.addEventListener('touchend', clear);
-    row.addEventListener('touchmove', clear);
-    row.addEventListener('touchcancel', clear);
   });
 
-  // 点击其他位置关闭所有 tooltip
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.check-row')) {
-      document.querySelectorAll('.check-row.show-tooltip').forEach(r => r.classList.remove('show-tooltip'));
+  // 右列滚动 → 左列高亮跟随
+  const rightContent = document.getElementById('rightContent');
+  rightContent.onscroll = () => {
+    const cards = cardList.querySelectorAll('.course-card');
+    const scrollTop = rightContent.scrollTop;
+    const containerMid = scrollTop + rightContent.clientHeight / 2;
+    let closest = null;
+    let closestDist = Infinity;
+    cards.forEach(card => {
+      const cardTop = card.offsetTop;
+      const cardMid = cardTop + card.offsetHeight / 2;
+      const dist = Math.abs(cardMid - containerMid);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closest = card.dataset.id;
+      }
+    });
+    if (closest && closest !== activeId) {
+      activeId = closest;
+      rail.querySelectorAll('.rail-item').forEach(r => {
+        r.classList.toggle('active', r.dataset.id === closest);
+      });
     }
-  });
+  };
 
   // 日期
   const d = new Date();
