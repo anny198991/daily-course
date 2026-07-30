@@ -525,6 +525,31 @@ body {
   opacity: 0.6;
 }
 
+/* 运动选择 - 其他输入框 */
+.sport-other-box {
+  padding: 12px 4px 4px;
+}
+.sport-other-input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--text-body);
+  background: rgba(250, 248, 243, 0.6);
+  outline: none;
+  -webkit-appearance: none;
+}
+.sport-other-input:focus {
+  border-color: var(--bamboo);
+  background: var(--card);
+}
+.sport-other-input::placeholder {
+  color: var(--text-faint);
+  opacity: 0.6;
+}
+
 /* 底部箴言 */
 .footnote {
   margin-top: 40px;
@@ -622,6 +647,19 @@ body {
       <label class="review-label">T · Try<span class="review-sub">下次尝试什么新做法</span></label>
       <textarea class="review-input" id="revTry" rows="3" placeholder="下次想试什么…"></textarea>
     </div>
+  </div>
+</div>
+
+<!-- 底部运动选择（c7 专用）-->
+<div class="time-sheet-backdrop" id="sportBackdrop"></div>
+<div class="time-sheet" id="sportSheet">
+  <div class="sheet-header">
+    <span class="sheet-title">动 · 舒体养身 · 选项目</span>
+    <span class="sheet-clear" id="sportSave">保存</span>
+  </div>
+  <div id="sportOptions"></div>
+  <div class="sport-other-box" id="sportOtherBox" style="display:none;">
+    <input type="text" class="sport-other-input" id="sportOtherInput" placeholder="填写其他运动项目…">
   </div>
 </div>
 
